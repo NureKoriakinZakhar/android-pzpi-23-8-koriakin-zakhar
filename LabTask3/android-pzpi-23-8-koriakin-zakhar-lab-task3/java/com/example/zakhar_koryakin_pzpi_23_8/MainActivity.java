@@ -25,7 +25,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         resultField = findViewById(R.id.resultField);
-        resultField.setText("0");
+
+        if (savedInstanceState != null) {
+            resultField.setText(savedInstanceState.getString("resultField"));
+            firstNum = savedInstanceState.getDouble("firstNum");
+            operation = savedInstanceState.getString("operation");
+            isNewNumber = savedInstanceState.getBoolean("isNewNumber");
+        } else {
+            resultField.setText("0");
+        }
 
         int[] numberIds = {
                 R.id.btn0, R.id.btn1, R.id.btn2, R.id.btn3, R.id.btn4,
@@ -48,6 +56,14 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnDot).setOnClickListener(v -> addDecimalPoint());
         findViewById(R.id.btnDelete).setOnClickListener(v -> deleteLastCharacter());
         findViewById(R.id.btnPercent).setOnClickListener(v -> calculatePercent());
+    }
+
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString("resultField", resultField.getText().toString());
+        outState.putDouble("firstNum", firstNum);
+        outState.putString("operation", operation);
+        outState.putBoolean("isNewNumber", isNewNumber);
     }
 
     private void onNumberClick(String number) {
