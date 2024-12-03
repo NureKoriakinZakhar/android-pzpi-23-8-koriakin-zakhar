@@ -1,0 +1,597 @@
+Харківський університет радіоелектроніки
+Факультет комп'ютерних наук
+Кафедра програмної інженерії
+
+
+
+
+
+
+
+ЗВІТ
+до практичного заняття 3 з дисципліни
+"Програмування під Android"
+на тему "Діалогові панелі, обробник черг повідомлень та списки з прогортанням" 
+
+
+
+
+
+
+Виконав ст. гр ПЗПІ-23-8
+Корякін Захар Павлович
+
+
+Перевірив 
+ст. викладач кафедри ПІ
+Сокорчук Ігор Петрович
+
+
+
+
+
+
+
+
+Харків 2024
+
+МЕТА
+     
+    Метою цих практичних занять є освоєння основних компонентів Android, таких як діалогові панелі, обробка черг повідомлень та робота з RecyclerView, а також набуття навичок створення ефективних і зручних користувацьких інтерфейсів, оптимізації взаємодії між потоками та відображення даних у списках із прогортанням.
+
+ЗАВДАННЯ
+
+ПЗ Діалогові панелі (Dialog) в Android: 
+Додайте кнопку до основної розмітки (activity_main.xml), яка ініціюватиме показ діалогової панелі [див. Додаток Б]
+У файлі MainActivity.java реалізуйте логіку для показу AlertDialog [див. Додаток А]
+Додайте кнопку для виклику DatePickerDialog 
+У MainActivity реалізуйте показ DatePickerDialog. 
+Створіть новий XML-файл для індивідуальної діалогової панелі (custom_dialog.xml). 
+Реалізуйте показ Custom Dialog у MainActivity.
+Перевірте роботу повідомлень.
+
+Обробник черг повідомлень (Handler) в Android:
+Створити та реалізувати обробку повідомлення (Handler)
+
+ПЗ Списки з прогортанням (RecyclerView Adapter):
+Налаштуйте базову розмітку у файлі activity_main.xml, щоб містити компонент RecyclerView.
+Налаштуйте адаптер (Adapter).
+Налаштуйте ViewHolder.
+Створіть макет для елементів списку.
+Підключіть RecyclerView до адаптера.
+Запустіть застосунок на емуляторі або пристрої та переконайтеся, що RecyclerView відображає список з елементами.
+Протестуйте, як відображаються дані та як працює прогортання списку.
+
+
+ХІД РОБОТИ
+
+ПЗ Діалогові панелі (Dialog) в Android: 
+Додав кнопку до основної розмітки, яка ініціюватиме показ діалогової панелі [див. Додаток Б].
+У файлі DialogActivity.java реалізував логіку для показу AlertDialog [див. Додаток А].
+Додав кнопку для виклику DatePickerDialog [див. Додаток Б].
+У DialogActivity.java реалізував показ DatePickerDialog [див. Додаток А].
+Реалізуйте показ Custom Dialog у DialogActivity.java [див. Додаток А].
+Перевірив роботу повідомлень.
+
+Обробник черг повідомлень (Handler) в Android:
+Створив кнопку в activity_handler.xml, щоб ініціювати показ діалогової панелі [див. Додаток Г].
+Реалізував логіку обробки повідомлень за допомогою Handler в HandlerActivity.java  [див. Додаток В].
+Використовував обробник для виконання операцій у фоновому потоці, а потім оновлював інтерфейс користувача в головному потоці див. Додаток В].
+
+ПЗ Списки з прогортанням (RecyclerView Adapter):
+Додав компонент RecyclerView до основного макета [див. Додаток Є].
+Створив макет для елементів списку[див. Додаток Ж].
+Створив клас адаптера (Adapter) [див. Додаток Е].
+Зв’язав RecyclerView з адаптером [див. Додаток Д].
+Запустив застосунок на пристрої та переконайтеся, що RecyclerView відображає список з елементами.
+
+
+ВИСНОВКИ
+     
+     Посилання на відео в YouTube: https://youtu.be/z_U_6E4lTMw
+     
+     В результаті виконання практичних завдань були набуті навички роботи з основними компонентами Android, такими як діалогові панелі, обробка повідомлень через чергу та використання RecyclerView для ефективного відображення даних у вигляді списків. Були освоєні принципи оптимізації взаємодії між потоками та забезпечення адаптивності інтерфейсу для різних екранів. Завдяки цьому було досягнуто розуміння важливості ефективної організації роботи з інтерфейсами та даними в мобільних додатках.
+
+ВИКОРИСТАННІ ДЖЕРЕЛА
+
+1. YouTube. " Як Зробити Android Додаток з Нуля" https://www.youtube.com/watch?v=p0tmWQIKk4g. Дата доступу: 3 грудня 2024 року.
+2. Національний університет радіоелектроніки. https://dl.nure.ua/. Дата доступу: 3 грудня 2024 року.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК А
+Файл DialogActivity.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.app.AlertDialog;
+4  import android.app.DatePickerDialog;
+5  import android.os.Bundle;
+6  import android.view.View;
+7  import android.widget.EditText;
+8  import android.widget.Toast;
+9  import androidx.appcompat.app.AppCompatActivity;
+10  
+11  public class DialogActivity extends AppCompatActivity {
+12      @Override
+13      protected void onCreate(Bundle savedInstanceState) {
+14          super.onCreate(savedInstanceState);
+15          setContentView(R.layout.activity_dialog);
+16  
+17          findViewById(R.id.buttonAlertDialog).setOnClickListener(v -> {
+18              new AlertDialog.Builder(DialogActivity.this)
+19                      .setTitle("AlertDialog")
+20                      .setMessage("Це приклад AlertDialog.")
+21                      .setPositiveButton("OK", (dialog, which) -> Toast.makeText(this, "OK Натиснут", Toast.LENGTH_SHORT).show())
+22                      .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+23                      .show();
+24          });
+25  
+26          findViewById(R.id.buttonDatePickerDialog).setOnClickListener(v -> {
+27              DatePickerDialog datePickerDialog = new DatePickerDialog(this, (view, year, month, dayOfMonth) -> {
+28                  Toast.makeText(this, "Ви обрали дату: " + dayOfMonth + "/" + (month + 1) + "/" + year, Toast.LENGTH_SHORT).show();
+29              }, 2023, 0, 1);
+30              datePickerDialog.show();
+31          });
+32  
+33          findViewById(R.id.buttonCustomDialog).setOnClickListener(v -> {
+34              EditText editText = new EditText(this);
+35              editText.setHint("Введіть текст");
+36              new AlertDialog.Builder(this)
+37                      .setTitle("Custom Dialog")
+38                      .setView(editText)
+39                      .setPositiveButton("OK", (dialog, which) -> {
+40                          String input = editText.getText().toString();
+41                          Toast.makeText(this, "Введено: " + input, Toast.LENGTH_SHORT).show();
+42                      })
+43                      .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+44                      .show();
+45          });
+46      }
+47  }
+
+
+
+
+
+
+
+ДОДАТОК Б
+Файл activity_dialog.xml
+1  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+2      android:layout_width="match_parent"
+3      android:layout_height="match_parent"
+4      android:orientation="vertical"
+5      android:padding="16dp">
+6  
+7      <Button
+8          android:id="@+id/buttonAlertDialog"
+9          android:layout_width="match_parent"
+10         android:layout_height="wrap_content"
+11         android:text="Показати AlertDialog" />
+12  
+13     <Button
+14         android:id="@+id/buttonDatePickerDialog"
+15         android:layout_width="match_parent"
+16         android:layout_height="wrap_content"
+17         android:text="Показати DatePickerDialog" />
+18  
+19     <Button
+20         android:id="@+id/buttonCustomDialog"
+21         android:layout_width="match_parent"
+22         android:layout_height="wrap_content"
+23         android:text="Показати Custom Dialog" />
+24 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК В
+Файл HandlerActivity.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.os.Bundle;
+4  import android.os.Handler;
+5  import android.os.HandlerThread;
+6  import android.os.Looper;
+7  import android.os.Message;
+8  import android.view.View;
+9  import android.widget.Button;
+10 import android.widget.TextView;
+11 
+12 import androidx.appcompat.app.AppCompatActivity;
+13 
+14 public class HandlerActivity extends AppCompatActivity {
+15 
+16     private Handler mainHandler;
+17     private Handler backgroundHandler;
+18 
+19     @Override
+20     protected void onCreate(Bundle savedInstanceState) {
+21         super.onCreate(savedInstanceState);
+22         setContentView(R.layout.activity_handler);
+23 
+24         Button startHandlerButton = findViewById(R.id.startHandlerButton);
+25         TextView handlerMessageTextView = findViewById(R.id.handlerMessageTextView);
+26 
+27         mainHandler = new Handler(Looper.getMainLooper()) {
+28             @Override
+29             public void handleMessage(Message msg) {
+30                 handlerMessageTextView.setText("Отримано повідомлення: " + msg.what);
+31             }
+32         };
+33 
+34         HandlerThread handlerThread = new HandlerThread("BackgroundThread");
+35         handlerThread.start();
+36         backgroundHandler = new Handler(handlerThread.getLooper());
+37 
+38         startHandlerButton.setOnClickListener(new View.OnClickListener() {
+39             @Override
+40             public void onClick(View v) {
+41                 backgroundHandler.post(new Runnable() {
+42                     @Override
+43                     public void run() {
+44                         try {
+45                             Thread.sleep(2000);
+46                         } catch (InterruptedException e) {
+47                             e.printStackTrace();
+48                         }
+49 
+50                         Message message = mainHandler.obtainMessage();
+51                         message.what = 1;
+52                         mainHandler.sendMessage(message);
+53                     }
+54                 });
+55             }
+56         });
+57     }
+58 
+59     @Override
+60     protected void onDestroy() {
+61         super.onDestroy();
+62         backgroundHandler.getLooper().quit();
+63     }
+64 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Г
+Файл activity_handler.xml
+1  <?xml version="1.0" encoding="utf-8"?>
+2  <LinearLayout
+3      xmlns:android="http://schemas.android.com/apk/res/android"
+4      android:layout_width="match_parent"
+5      android:layout_height="match_parent"
+6      android:orientation="vertical"
+7      android:padding="16dp">
+8  
+9      <Button
+10         android:id="@+id/startHandlerButton"
+11         android:layout_width="wrap_content"
+12         android:layout_height="wrap_content"
+13         android:text="Start Handler"
+14         android:layout_gravity="center_horizontal" />
+15  
+16     <TextView
+17         android:id="@+id/handlerMessageTextView"
+18         android:layout_width="wrap_content"
+19         android:layout_height="wrap_content"
+20         android:text="Повідомлення з'явиться тут"
+21         android:layout_marginTop="20dp"
+22         android:layout_gravity="center_horizontal" />
+23 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Д
+Файл MainActivity.java
+1 package com.example.zakhar_koryakin_pzpi_23_8;
+2 
+3 import android.os.Bundle;
+4 import androidx.appcompat.app.AppCompatActivity;
+5 import androidx.recyclerview.widget.LinearLayoutManager;
+6 import androidx.recyclerview.widget.RecyclerView;
+7 
+8 public class MainActivity extends AppCompatActivity {
+9     @Override
+10    protected void onCreate(Bundle savedInstanceState) {
+11        super.onCreate(savedInstanceState);
+12        setContentView(R.layout.activity_main);
+13 
+14        String[] myDataset = {"Елемент 1", "Елемент 2", "Елемент 3", "Елемент 4", "Елемент 5"};
+15        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+16 
+17        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+18        MyAdapter mAdapter = new MyAdapter(myDataset);
+19        recyclerView.setAdapter(mAdapter);
+20    }
+21 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Е
+Файл MyAdapter.java
+1 package com.example.zakhar_koryakin_pzpi_23_8;
+2 
+3 import android.view.LayoutInflater;
+4 import android.view.View;
+5 import android.view.ViewGroup;
+6 import android.widget.TextView;
+7 
+8 import androidx.annotation.NonNull;
+9 import androidx.recyclerview.widget.RecyclerView;
+10 
+11 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
+12     private String[] mData;
+13 
+14     public MyAdapter(String[] data) {
+15         this.mData = data;
+16     }
+17 
+18     public static class ViewHolder extends RecyclerView.ViewHolder {
+19         public TextView textView;
+20 
+21         public ViewHolder(@NonNull View itemView) {
+22             super(itemView);
+23             textView = itemView.findViewById(R.id.textView);
+24         }
+25     }
+26 
+27     @NonNull
+28     @Override
+29     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+30         View v = LayoutInflater.from(parent.getContext())
+31                 .inflate(R.layout.list_item, parent, false);
+32         return new ViewHolder(v);
+33     }
+34 
+35     @Override
+36     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+37         holder.textView.setText(mData[position]);
+38     }
+39 
+40     @Override
+41     public int getItemCount() {
+42         return mData.length;
+43     }
+44 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Є
+Файл activity_main.xml
+1 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+2     android:layout_width="match_parent"
+3     android:layout_height="match_parent"
+4     android:orientation="vertical">
+5 
+6     <androidx.recyclerview.widget.RecyclerView
+7         android:id="@+id/recyclerView"
+8         android:layout_width="match_parent"
+9         android:layout_height="match_parent" />
+10 </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Ж
+Файл list_item.xml
+1 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+2     android:layout_width="match_parent"
+3     android:layout_height="wrap_content"
+4     android:orientation="horizontal"
+5     android:padding="16dp">
+6 
+7     <TextView
+8         android:id="@+id/textView"
+9         android:layout_width="wrap_content"
+10        android:layout_height="wrap_content"
+11        android:textSize="18sp"
+12        android:textColor="#000" />
+13 </LinearLayout>
+2
+
+
