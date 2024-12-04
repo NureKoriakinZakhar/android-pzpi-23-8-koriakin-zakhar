@@ -1,0 +1,417 @@
+Харківський університет радіоелектроніки
+Факультет комп'ютерних наук
+Кафедра програмної інженерії
+
+
+
+
+
+
+
+ЗВІТ
+до практичного заняття 4 з дисципліни
+"Програмування під Android"
+на тему "ПЗ Сховища даних (Preferences, база даних SQLite, файли)" 
+
+
+
+
+
+
+
+Виконав ст. гр ПЗПІ-23-8
+Корякін Захар Павлович
+
+
+Перевірив 
+ст. викладач кафедри ПІ
+Сокорчук Ігор Петрович
+
+
+
+
+
+
+
+
+Харків 2024
+
+МЕТА
+     
+    Метою цього практичного заняття є ознайомити студентів із різними способами збереження даних у Android, зокрема з використанням SharedPreferences, бази даних SQLite та роботи з файлами. Студенти мають навчитися застосовувати ці методи у прикладних проєктах, а також набувати навичок створення ефективних і зручних способів зберігання та отримання даних у мобільних додатках.
+
+ЗАВДАННЯ
+
+    Створіть простий застосунок, який дозволяє зберігати та відображати налаштування користувача (наприклад, ім'я та вік). 
+    При натисканні на кнопку дані мають записуватися у SharedPreferences, а при перезапуску застосунку — автоматично зчитуватися. 
+    Створіть базу даних для збереження інформації про користувачів (ім'я, вік). 
+    Реалізуйте додавання нових користувачів у базу через форму введення. 
+    Відобразіть список користувачів на екрані. 
+    Створіть функціонал для запису текстових даних у файл. 
+    Реалізуйте можливість зчитування цього файлу та відображення вмісту на екрані
+
+
+ХІД РОБОТИ
+
+    У файлі activity_main.xml був спроектований інтерфейс користувача [див. Додаток Б].
+    Цей інтерфейс включає кілька елементів:
+* EditText для введення ім'я користувача та віку.
+* Button для збереження даних у SharedPreferences, SQLite Database та файл, а також для відображення цих даних на екрані.
+* TextView для відображення результатів виконаних операцій (наприклад, списку користувачів або вмісту файлу).
+    
+    SharedPreferences використовувалося для збереження налаштувань користувача, таких як ім'я та вік. Кнопка "Зберегти у SharedPreferences" зберігає введені дані в SharedPreferences за допомогою методу putString, де зберігаються дані у вигляді пар «ключ-значення». Дані автоматично зчитуються за допомогою методу getString після перезапуску програми. Виведення цих даних на екран здійснюється через TextView [див. Додаток А].
+    
+    Для збереження інформації про користувачів була створена база даних SQLite. Клас DBHelper реалізує створення таблиці "users" для зберігання імені та віку користувачів у базі даних. Кнопка "Зберегти у SQLite Database" дозволяє додавати нових користувачів у базу даних, а кнопка "Відобразити SQLite Database" витягує список усіх користувачів з бази даних та виводить його на екран у вигляді тексту [див. Додаток А].
+    
+    В рамках роботи програми реалізовано збереження текстових даних у файл. Текст, введений користувачем у EditText (у полі "Текст"), записується у файл "myfile.txt" за допомогою класу FileOutputStream. Кнопка "Зберегти у File" відповідає за запис даних у файл, а кнопка "Відобразити File" зчитує вміст цього файлу і виводить його на екран, використовуючи FileInputStream [див. Додаток А].
+
+ВИСНОВКИ
+     
+     Посилання на відео в YouTube: https://youtu.be/uH__Qg5q5-8
+     
+     В результаті виконання практичного завдання я освоїв різні способи збереження даних у Android, зокрема використання SharedPreferences для збереження та отримання налаштувань застосунку, роботу з базою даних SQLite, включаючи створення, додавання, отримання та оновлення даних, а також збереження та читання даних у файловій системі внутрішньої та зовнішньої пам'яті пристрою. Завдяки цьому я досяг розуміння важливості ефективної організації роботи з даними в мобільних додатках та можу застосовувати відповідні методи у реальних проєктах.
+
+ВИКОРИСТАННІ ДЖЕРЕЛА
+
+1. YouTube. " Як Зробити Android Додаток з Нуля" https://www.youtube.com/watch?v=p0tmWQIKk4g. Дата доступу: 4 грудня 2024 року.
+2. Національний університет радіоелектроніки. https://dl.nure.ua/. Дата доступу: 4 грудня 2024 року.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК А
+Файл MainActivity.java
+1    package com.example.zakhar_koryakin_pzpi_23_8;
+2    
+3    import android.content.ContentValues;
+4    import android.content.Context;
+5    import android.content.SharedPreferences;
+6    import android.database.Cursor;
+7    import android.database.sqlite.SQLiteDatabase;
+8    import android.database.sqlite.SQLiteOpenHelper;
+9    import android.os.Bundle;
+10   import android.view.View;
+11   import android.widget.Button;
+12   import android.widget.EditText;
+13   import android.widget.TextView;
+14   import android.widget.Toast;
+15   
+16   import androidx.appcompat.app.AppCompatActivity;
+17   
+18   import java.io.FileInputStream;
+19   import java.io.FileOutputStream;
+20   
+21   public class MainActivity extends AppCompatActivity {
+22   
+23       EditText etName, etAge, etFileData;
+24       Button btnSavePrefs, btnLoadPrefs, btnSaveDB, btnLoadDB, btnSaveFile, btnLoadFile;
+25       TextView tvResults;
+26   
+27       SharedPreferences sharedPreferences;
+28       SQLiteDatabase db;
+29       DBHelper dbHelper;
+30       static final String PREFS_NAME = "MyPrefs";
+31   
+32       @Override
+33       protected void onCreate(Bundle savedInstanceState) {
+34           super.onCreate(savedInstanceState);
+35           setContentView(R.layout.activity_main);
+36   
+37           etName = findViewById(R.id.etName);
+38           etAge = findViewById(R.id.etAge);
+39           etFileData = findViewById(R.id.etFileData);
+40           btnSavePrefs = findViewById(R.id.btnSavePrefs);
+41           btnLoadPrefs = findViewById(R.id.btnLoadPrefs);
+42           btnSaveDB = findViewById(R.id.btnSaveDB);
+43           btnLoadDB = findViewById(R.id.btnLoadDB);
+44           btnSaveFile = findViewById(R.id.btnSaveFile);
+45           btnLoadFile = findViewById(R.id.btnLoadFile);
+46           tvResults = findViewById(R.id.tvResults);
+47   
+48           sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+49           dbHelper = new DBHelper(this);
+50           db = dbHelper.getWritableDatabase();
+51   
+52           btnSavePrefs.setOnClickListener(new View.OnClickListener() {
+53               @Override
+54               public void onClick(View v) {
+55                   saveToPreferences();
+56               }
+57           });
+58   
+59           btnLoadPrefs.setOnClickListener(new View.OnClickListener() {
+60               @Override
+61               public void onClick(View v) {
+62                   loadFromPreferences();
+63               }
+64           });
+65   
+66           btnSaveDB.setOnClickListener(new View.OnClickListener() {
+67               @Override
+68               public void onClick(View v) {
+69                   saveToDatabase();
+70               }
+71           });
+72   
+73           btnLoadDB.setOnClickListener(new View.OnClickListener() {
+74               @Override
+75               public void onClick(View v) {
+76                   loadFromDatabase();
+77               }
+78           });
+79   
+80           btnSaveFile.setOnClickListener(new View.OnClickListener() {
+81               @Override
+82               public void onClick(View v) {
+83                   saveToFile();
+84               }
+85           });
+86   
+87           btnLoadFile.setOnClickListener(new View.OnClickListener() {
+88               @Override
+89               public void onClick(View v) {
+90                   loadFromFile();
+91               }
+92           });
+93       }
+94   
+95       private void saveToPreferences() {
+96           SharedPreferences.Editor editor = sharedPreferences.edit();
+97           editor.putString("name", etName.getText().toString());
+98           editor.putString("age", etAge.getText().toString());
+99           editor.apply();
+100          Toast.makeText(this, "Дані збережено у SharedPreferences", Toast.LENGTH_SHORT).show();
+101      }
+102  
+103      private void loadFromPreferences() {
+104          String name = sharedPreferences.getString("name", "No name defined");
+105          String age = sharedPreferences.getString("age", "No age defined");
+106          tvResults.setText("Name: " + name + "\nAge: " + age);
+107      }
+108  
+109      private void saveToDatabase() {
+110          ContentValues values = new ContentValues();
+111          values.put("name", etName.getText().toString());
+112          values.put("age", Integer.parseInt(etAge.getText().toString()));
+113          db.insert("users", null, values);
+114          Toast.makeText(this, "Дані збережено у SQLite Database", Toast.LENGTH_SHORT).show();
+115      }
+116  
+117      private void loadFromDatabase() {
+118          Cursor cursor = db.query("users", null, null, null, null, null, null);
+119          StringBuilder builder = new StringBuilder();
+120          while (cursor.moveToNext()) {
+121              String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+122              int age = cursor.getInt(cursor.getColumnIndexOrThrow("age"));
+123              builder.append("Name: ").append(name).append(", Age: ").append(age).append("\n");
+124          }
+125          cursor.close();
+126          tvResults.setText(builder.toString());
+127      }
+128  
+129      private void saveToFile() {
+130          String fileData = etFileData.getText().toString();
+131          try (FileOutputStream fos = openFileOutput("myfile.txt", Context.MODE_PRIVATE)) {
+132              fos.write(fileData.getBytes());
+133              Toast.makeText(this, "Дані збережено у file", Toast.LENGTH_SHORT).show();
+134          } catch (Exception e) {
+135              e.printStackTrace();
+136          }
+137      }
+138  
+139      private void loadFromFile() {
+140          StringBuilder builder = new StringBuilder();
+141          try (FileInputStream fis = openFileInput("myfile.txt")) {
+142              int c;
+143              while ((c = fis.read()) != -1) {
+144                  builder.append((char) c);
+145              }
+146              tvResults.setText(builder.toString());
+147          } catch (Exception e) {
+148              e.printStackTrace();
+149          }
+150      }
+151  
+152      class DBHelper extends SQLiteOpenHelper {
+153  
+154          public DBHelper(Context context) {
+155              super(context, "MyDB", null, 1);
+156          }
+157  
+158          @Override
+159          public void onCreate(SQLiteDatabase db) {
+160              db.execSQL("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT, age INTEGER)");
+161          }
+162  
+163          @Override
+164          public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+165          }
+166      }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Б
+Файл activity_main.xml
+1    <?xml version="1.0" encoding="utf-8"?>
+2    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+3        android:layout_width="match_parent"
+4        android:layout_height="match_parent"
+5        android:orientation="vertical"
+6        android:padding="16dp">
+7    
+8        <EditText
+9            android:id="@+id/etName"
+10           android:layout_width="match_parent"
+11           android:layout_height="wrap_content"
+12           android:hint="Ім'я" />
+13   
+14       <EditText
+15           android:id="@+id/etAge"
+16           android:layout_width="match_parent"
+17           android:layout_height="wrap_content"
+18           android:hint="Вік"
+19           android:inputType="number" />
+20   
+21       <Button
+22           android:id="@+id/btnSavePrefs"
+23           android:layout_width="match_parent"
+24           android:layout_height="wrap_content"
+25           android:text="Зберегти у SharedPreferences" />
+26   
+27       <Button
+28           android:id="@+id/btnLoadPrefs"
+29           android:layout_width="match_parent"
+30           android:layout_height="wrap_content"
+31           android:text="Відобразити SharedPreferences" />
+32   
+33       <Button
+34           android:id="@+id/btnSaveDB"
+35           android:layout_width="match_parent"
+36           android:layout_height="wrap_content"
+37           android:text="Зберегти у SQLite Database" />
+38   
+39       <Button
+40           android:id="@+id/btnLoadDB"
+41           android:layout_width="match_parent"
+42           android:layout_height="wrap_content"
+43           android:text="Відобразити SQLite Database" />
+44   
+45       <EditText
+46           android:id="@+id/etFileData"
+47           android:layout_width="match_parent"
+48           android:layout_height="wrap_content"
+49           android:hint="Текст" />
+50   
+51       <Button
+52           android:id="@+id/btnSaveFile"
+53           android:layout_width="match_parent"
+54           android:layout_height="wrap_content"
+55           android:text="Зберегти у File" />
+56   
+57       <Button
+58           android:id="@+id/btnLoadFile"
+59           android:layout_width="match_parent"
+60           android:layout_height="wrap_content"
+61           android:text="Відобразити File" />
+62   
+63       <TextView
+64           android:id="@+id/tvResults"
+65           android:layout_width="match_parent"
+66           android:layout_height="wrap_content"
+67           android:padding="8dp"
+68           android:text="Тут будуть результати відображення інформації з файлів" />
+69   </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Ж
+Файл list_item.xml
+1 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+2     android:layout_width="match_parent"
+3     android:layout_height="wrap_content"
+4     android:orientation="horizontal"
+5     android:padding="16dp">
+6 
+7     <TextView
+8         android:id="@+id/textView"
+9         android:layout_width="wrap_content"
+10        android:layout_height="wrap_content"
+11        android:textSize="18sp"
+12        android:textColor="#000" />
+13 </LinearLayout>
+2
+
+
