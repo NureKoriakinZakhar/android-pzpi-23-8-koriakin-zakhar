@@ -1,0 +1,897 @@
+Харківський університет радіоелектроніки
+Факультет комп'ютерних наук
+Кафедра програмної інженерії
+
+
+
+
+
+
+
+ЗВІТ
+до лабораторної роботи 4 з дисципліни
+"Програмування під Android"
+на тему "Створення нотаток" 
+
+
+
+
+
+
+
+Виконав ст. гр ПЗПІ-23-8
+Корякін Захар Павлович
+
+
+Перевірив 
+ст. викладач кафедри ПІ
+Сокорчук Ігор Петрович
+
+
+
+
+
+
+
+
+Харків 2024
+
+МЕТА
+     
+    Метою цієї лабораторної роботи є ознайомити студентів з основами розробки мобільних додатків для платформи Android. Зокрема, студенти повинні навчитися реалізовувати функціонал для створення, редагування, перегляду та видалення нотаток. Вони також отримають навички роботи з графічними елементами інтерфейсу, такими як іконки, контекстне меню та пошук/фільтрація. Крім того, студенти ознайомляться з принципами локалізації інтерфейсу додатка для підтримки двох мов — української та англійської.
+
+ЗАВДАННЯ
+
+    Розробити застосунок для ведення нотаток.
+    
+    Застосунок повинен дозволяти переглядати список нотаток, створювати нову нотатку, редагувати нотатку та видаляти нотатку. Кожна нотатка повинна мати назву, опис, важливість (три класи), час і дату призначення і картинку (вибирається з галереї).
+    
+    У списку нотатки відображаються з іконкою з галереї і часом створення (праворуч зверху більш дрібним шрифтом), а також графічним відображенням класу важливості (іконка з множини).
+    
+    Потрібно реалізувати функції додавання, видалення, редагування (без збереження між перезапуск додатку) нотаток.
+    
+    Видалення/редагування викликаються з контекстного меню при довгому натисненні, додавання - з основного меню в ActionBar. У ActionBar реалізувати пошук / фільтрація заміток за змістом тексту, а також фільтрацію за важливістю. Текстові елементи користувацького інтерфейсу повинні бути локалізовані українською та англійською мовами.
+
+
+
+
+
+ХІД РОБОТИ
+
+Note.java
+Клас Note представляє модель даних для зберігання інформації про нотатку. Він містить приватні поля для збереження id нотатки, заголовка, опису, рівня важливості, дати та часу створення, а також URI зображення. Клас має конструктор для ініціалізації цих полів та геттери для отримання їх значень. Кожна нотатка у програмі буде екземпляром цього класу, що дозволяє зберігати всю необхідну інформацію в базі даних і використовувати її для відображення у списку[див. Додаток А].
+
+AddNoteActivity.java
+Клас AddNoteActivity відповідає за додавання нової нотатки. У цьому класі реалізовано логіку для введення даних користувачем, вибору зображення для нотатки та збереження введених даних у базу даних. Інтерфейс включає поля введення заголовка, опису, вибір рівня важливості через Spinner та кнопку для вибору зображення. Після натискання кнопки "Save Note" дані зберігаються в базі даних, а користувача перенаправляють до головного списку[див. Додаток Б].
+
+MainActivity.java
+Цей клас є основною активністю додатка, яка відображає список усіх нотаток у вигляді RecyclerView. У MainActivity реалізовано функціонал пошуку нотаток за заголовком через текстове поле, а також кнопку для переходу до активності додавання нової нотатки. Використовуючи адаптер NotesAdapter, нотатки завантажуються з бази даних і відображаються у вигляді карток. Передбачено обробку кліків на нотатки для їх перегляду або редагування[див. Додаток В].
+
+EditNoteActivity.java
+Клас EditNoteActivity відповідає за редагування існуючих нотаток. У цьому класі користувач може змінювати заголовок, опис, важливість та зображення нотатки. Додано можливість видалення нотатки через кнопку "Delete Note". Після внесення змін користувач може зберегти оновлену інформацію, яка зберігається у базі даних, або видалити нотатку, після чого його перенаправляють до головного списку[див. Додаток Г].
+
+DatabaseHelper.java
+Цей клас реалізує управління базою даних SQLite. Він містить методи для створення таблиці нотаток, а також операції додавання, оновлення, видалення та отримання списку нотаток. У таблиці бази даних зберігаються поля: id, title, description, importance, dateTime і imageUri. Клас забезпечує взаємодію між основними активностями програми та базою даних[див. Додаток Д].
+
+NotesAdapter.java
+Адаптер NotesAdapter забезпечує відображення списку нотаток у RecyclerView. Він створює кожен елемент списку у вигляді картки з інформацією про нотатку: заголовок, опис, дату, рівень важливості та зображення. Реалізовано інтерфейс OnNoteClickListener для обробки кліків на нотатки[див. Додаток Е].
+
+XML-макети
+* activity_add_note.xml — інтерфейс для додавання нової нотатки. Містить поля введення заголовка, опису, вибір рівня важливості, кнопку вибору зображення та кнопку "Save Note".
+* activity_edit_note.xml — інтерфейс для редагування нотатки. Містить аналогічні елементи, що й у activity_add_note.xml, з додаванням кнопки "Delete Note".
+* activity_main.xml — головний екран програми з пошуком і списком нотаток у RecyclerView.
+* note_item.xml — макет для відображення однієї нотатки у списку, включаючи зображення, заголовок, опис, дату та іконку важливості.
+
+ВИСНОВКИ
+     
+     Посилання на відео в YouTube: https://youtu.be/HNspatqaU3A
+     
+     У ході лабораторної роботи я навчився розробляти мобільний додаток для платформи Android, що дозволяє створювати, редагувати, переглядати та видаляти нотатки. Я освоїв роботу з графічними елементами інтерфейсу, такими як іконки та контекстне меню, а також навчився реалізовувати функціонал пошуку та фільтрації нотаток за змістом і важливістю. Окрім того, я отримав досвід у локалізації додатка для підтримки кількох мов, що дозволяє покращити зручність користування додатком для різномовних користувачів.
+
+ВИКОРИСТАННІ ДЖЕРЕЛА
+
+1. YouTube. " Як Зробити Android Додаток з Нуля" https://www.youtube.com/watch?v=p0tmWQIKk4g. Дата доступу: 17 грудня 2024 року.
+2. Національний університет радіоелектроніки. https://dl.nure.ua/. Дата доступу: 17 грудня 2024 року.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК А
+Файл Note.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.net.Uri;
+4  
+5  public class Note {
+6      private long id;
+7      private String title;
+8      private String description;
+9      private int importance;
+10     private String dateTime;
+11     private Uri imageUri;
+12 
+13     public Note(long id, String title, String description, int importance, String dateTime, Uri imageUri) {
+14         this.id = id;
+15         this.title = title;
+16         this.description = description;
+17         this.importance = importance;
+18         this.dateTime = dateTime;
+19         this.imageUri = imageUri;
+20     }
+21 
+22     public long getId() {
+23         return id;
+24     }
+25 
+26     public String getTitle() {
+27         return title;
+28     }
+29 
+30     public String getDescription() {
+31         return description;
+32     }
+33 
+34     public int getImportance() {
+35         return importance;
+36     }
+37 
+38     public String getDateTime() {
+39         return dateTime;
+40     }
+41 
+42     public Uri getImageUri() {
+43         return imageUri;
+44     }
+45 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Б
+Файл AddNoteActivity.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.content.Intent;
+4  import android.net.Uri;
+5  import android.os.Bundle;
+6  import android.provider.MediaStore;
+7  import android.view.View;
+8  import android.widget.Button;
+9  import android.widget.EditText;
+10 import android.widget.ImageView;
+11 import android.widget.Spinner;
+12 import android.widget.Toast;
+13 import androidx.annotation.Nullable;
+14 import androidx.appcompat.app.AppCompatActivity;
+15 
+16 import java.text.SimpleDateFormat;
+17 import java.util.Date;
+18 import java.util.Locale;
+19 
+20 public class AddNoteActivity extends AppCompatActivity {
+21 
+22     private static final int PICK_IMAGE_REQUEST = 1;
+23 
+24     private EditText titleEditText, descriptionEditText;
+25     private Spinner importanceSpinner;
+26     private Button saveButton, selectImageButton;
+27     private ImageView noteImageView;
+28     private Uri imageUri;
+29 
+30     @Override
+31     protected void onCreate(Bundle savedInstanceState) {
+32         super.onCreate(savedInstanceState);
+33         setContentView(R.layout.activity_add_note);
+34 
+35         titleEditText = findViewById(R.id.titleEditText);
+36         descriptionEditText = findViewById(R.id.descriptionEditText);
+37         importanceSpinner = findViewById(R.id.importanceSpinner);
+38         saveButton = findViewById(R.id.saveButton);
+39         selectImageButton = findViewById(R.id.selectImageButton);
+40         noteImageView = findViewById(R.id.noteImageView);
+41 
+42         selectImageButton.setOnClickListener(new View.OnClickListener() {
+43             @Override
+44             public void onClick(View v) {
+45                 openGallery();
+46             }
+47         });
+48 
+49         saveButton.setOnClickListener(new View.OnClickListener() {
+50             @Override
+51             public void onClick(View v) {
+52                 saveNote();
+53             }
+54         });
+55     }
+56 
+57     private void openGallery() {
+58         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+59         startActivityForResult(intent, PICK_IMAGE_REQUEST);
+60     }
+61 
+62     @Override
+63     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+64         super.onActivityResult(requestCode, resultCode, data);
+65         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+66             imageUri = data.getData();
+67             noteImageView.setImageURI(imageUri);
+68         }
+69     }
+70 
+71     private void saveNote() {
+72         String title = titleEditText.getText().toString().trim();
+73         String description = descriptionEditText.getText().toString().trim();
+74         int importance = importanceSpinner.getSelectedItemPosition();
+75         String dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
+76         String imageUriString = (imageUri != null) ? imageUri.toString() : "";
+77 
+78         if (title.isEmpty() || description.isEmpty()) {
+79             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+80         } else {
+81             DatabaseHelper dbHelper = new DatabaseHelper(this);
+82             long noteId = dbHelper.addNote(title, description, importance, dateTime, imageUriString);
+83 
+84             if (noteId != -1) {
+85                 Toast.makeText(this, "Note added successfully", Toast.LENGTH_SHORT).show();
+86                 finish();
+87             } else {
+88                 Toast.makeText(this, "Error adding note", Toast.LENGTH_SHORT).show();
+89             }
+90         }
+91     }
+92 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК В
+Файл MainActivity.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.Manifest;
+4  import android.content.Intent;
+5  import android.content.pm.PackageManager;
+6  import android.net.Uri;
+7  import android.os.Build;
+8  import android.os.Bundle;
+9  import android.provider.MediaStore;
+10 import android.text.Editable;
+11 import android.text.TextWatcher;
+12 import android.view.View;
+13 import android.widget.EditText;
+14 import android.widget.Toast;
+15 
+16 import androidx.activity.result.ActivityResultLauncher;
+17 import androidx.activity.result.contract.ActivityResultContracts;
+18 import androidx.annotation.Nullable;
+19 import androidx.appcompat.app.AppCompatActivity;
+20 import androidx.core.content.ContextCompat;
+21 import androidx.recyclerview.widget.LinearLayoutManager;
+22 import androidx.recyclerview.widget.RecyclerView;
+23 
+24 import java.util.ArrayList;
+25 
+26 public class MainActivity extends AppCompatActivity implements NotesAdapter.OnNoteClickListener {
+27 
+28     private static final int PICK_IMAGE_REQUEST = 1;
+29     private static final int ADD_NOTE_REQUEST_CODE = 1;
+30     private static final int EDIT_NOTE_REQUEST_CODE = 2;
+31 
+32     private RecyclerView recyclerView;
+33     private NotesAdapter adapter;
+34     private ArrayList<Note> notesList = new ArrayList<>();
+35     private ArrayList<Note> originalNotesList = new ArrayList<>();
+36     private DatabaseHelper databaseHelper;
+37     private Uri imageUri;
+38     private EditText searchEditText;
+39 
+40     private ActivityResultLauncher<String> requestPermissionLauncher =
+41             registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+42                 if (isGranted) {
+43                     updateNotesList();
+44                 } else {
+45                     Toast.makeText(this, "Permission denied. Cannot load images.", Toast.LENGTH_SHORT).show();
+46                 }
+47             });
+48 
+49     @Override
+50     protected void onCreate(Bundle savedInstanceState) {
+51         super.onCreate(savedInstanceState);
+52         setContentView(R.layout.activity_main);
+53 
+54         checkAndRequestPermissions();
+55 
+56         recyclerView = findViewById(R.id.recyclerView);
+57         databaseHelper = new DatabaseHelper(this);
+58         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+59         adapter = new NotesAdapter(this, notesList, this);
+60         recyclerView.setAdapter(adapter);
+61 
+62         findViewById(R.id.addNoteButton).setOnClickListener(v -> openAddNoteActivity());
+63 
+64         searchEditText = findViewById(R.id.searchEditText);
+65         searchEditText.addTextChangedListener(new TextWatcher() {
+66             @Override
+67             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+68 
+69             @Override
+70             public void onTextChanged(CharSequence s, int start, int before, int count) {
+71                 filterNotes(s.toString());
+72             }
+73 
+74             @Override
+75             public void afterTextChanged(Editable s) {}
+76         });
+77     }
+78 
+79     private void checkAndRequestPermissions() {
+80         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+81             if (ContextCompat.checkSelfPermission(
+82                     this, Manifest.permission.READ_MEDIA_IMAGES) !=
+83                     PackageManager.PERMISSION_GRANTED) {
+84                 requestPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
+85             }
+86         } else {
+87             if (ContextCompat.checkSelfPermission(
+88                     this, Manifest.permission.READ_EXTERNAL_STORAGE) !=
+89                     PackageManager.PERMISSION_GRANTED) {
+90                 requestPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
+91             }
+92         }
+93     }
+94 
+95     private void filterNotes(String searchText) {
+96         if (originalNotesList.isEmpty()) {
+97             originalNotesList.addAll(notesList);
+98         }
+99 
+100        notesList.clear();
+101 
+102        if (searchText.isEmpty()) {
+103            notesList.addAll(originalNotesList);
+104        } else {
+105            for (Note note : originalNotesList) {
+106                if (note.getTitle().toLowerCase().contains(searchText.toLowerCase())) {
+107                    notesList.add(note);
+108                }
+109            }
+110        }
+111 
+112        adapter.notifyDataSetChanged();
+113    }
+114 
+115    private void updateNotesList() {
+116        notesList.clear();
+117        originalNotesList.clear();
+118        notesList.addAll(databaseHelper.getAllNotes());
+119        originalNotesList.addAll(notesList);
+120        adapter.notifyDataSetChanged();
+121    }
+122 
+123    @Override
+124    protected void onStart() {
+125        super.onStart();
+126        updateNotesList();
+127    }
+128 
+129    private void openAddNoteActivity() {
+130        Intent intent = new Intent(this, AddNoteActivity.class);
+131        startActivityForResult(intent, ADD_NOTE_REQUEST_CODE);
+132    }
+133 
+134    @Override
+135    public void onNoteClick(Note note) {
+136        Intent intent = new Intent(this, EditNoteActivity.class);
+137        intent.putExtra("note_id", note.getId());
+138        intent.putExtra("title", note.getTitle());
+139        intent.putExtra("description", note.getDescription());
+140        intent.putExtra("importance", note.getImportance());
+141        intent.putExtra("image_uri", note.getImageUri() != null ? note.getImageUri().toString() : "");
+142 
+143        startActivityForResult(intent, EDIT_NOTE_REQUEST_CODE);
+144    }
+145 
+146    @Override
+147    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+148        super.onActivityResult(requestCode, resultCode, data);
+149 
+150        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
+151            imageUri = data.getData();
+152        }
+153 
+154        if ((requestCode == ADD_NOTE_REQUEST_CODE || requestCode == EDIT_NOTE_REQUEST_CODE)
+155                && resultCode == RESULT_OK) {
+156            updateNotesList();
+157        }
+158    }
+159 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Г
+Файл EditNoteActivity.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.content.Intent;
+4  import android.net.Uri;
+5  import android.os.Bundle;
+6  import android.provider.MediaStore;
+7  import android.view.View;
+8  import android.widget.Button;
+9  import android.widget.EditText;
+10 import android.widget.ImageView;
+11 import android.widget.Spinner;
+12 import android.widget.Toast;
+13 
+14 import androidx.annotation.Nullable;
+15 import androidx.appcompat.app.AppCompatActivity;
+16 
+17 public class EditNoteActivity extends AppCompatActivity {
+18 
+19     private static final int PICK_IMAGE_REQUEST = 1;
+20 
+21     private EditText titleEditText, descriptionEditText;
+22     private Spinner importanceSpinner;
+23     private Button saveButton, selectImageButton, deleteButton;
+24     private ImageView noteImageView;
+25     private Uri imageUri;
+26     private DatabaseHelper dbHelper;
+27     private long noteId;
+28 
+29     @Override
+30     protected void onCreate(Bundle savedInstanceState) {
+31         super.onCreate(savedInstanceState);
+32         setContentView(R.layout.activity_edit_note);
+33 
+34         dbHelper = new DatabaseHelper(this);
+35 
+36         titleEditText = findViewById(R.id.titleEditText);
+37         descriptionEditText = findViewById(R.id.descriptionEditText);
+38         importanceSpinner = findViewById(R.id.importanceSpinner);
+39         saveButton = findViewById(R.id.saveButton);
+40         selectImageButton = findViewById(R.id.selectImageButton);
+41         deleteButton = findViewById(R.id.deleteButton);
+42         noteImageView = findViewById(R.id.noteImageView);
+43 
+44         // Получаем данные из Intent
+45         Intent intent = getIntent();
+46         noteId = intent.getLongExtra("note_id", -1);
+47         String title = intent.getStringExtra("title");
+48         String description = intent.getStringExtra("description");
+49         int importance = intent.getIntExtra("importance", 0);
+50         String imageUriString = intent.getStringExtra("image_uri");
+51 
+52         // Заполняем поля
+53         titleEditText.setText(title);
+54         descriptionEditText.setText(description);
+55         importanceSpinner.setSelection(importance);
+56 
+57         if (imageUriString != null && !imageUriString.isEmpty()) {
+58             imageUri = Uri.parse(imageUriString);
+59             noteImageView.setImageURI(imageUri);
+60         }
+61 
+62         selectImageButton.setOnClickListener(v -> openGallery());
+63         saveButton.setOnClickListener(v -> updateNote());
+64         deleteButton.setOnClickListener(v -> deleteNote());
+65     }
+66 
+67     private void openGallery() {
+68         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+69         startActivityForResult(intent, PICK_IMAGE_REQUEST);
+70     }
+71 
+72     @Override
+73     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+74         super.onActivityResult(requestCode, resultCode, data);
+75         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
+76             imageUri = data.getData();
+77             noteImageView.setImageURI(imageUri);
+78         }
+79     }
+80 
+81     private void updateNote() {
+82         String title = titleEditText.getText().toString().trim();
+83         String description = descriptionEditText.getText().toString().trim();
+84         int importance = importanceSpinner.getSelectedItemPosition();
+85         String dateTime = getCurrentDateTime(); // Метод для получения текущей даты
+86         String imageUriString = (imageUri != null) ? imageUri.toString() : "";
+87 
+88         if (title.isEmpty() || description.isEmpty()) {
+89             Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+90             return;
+91         }
+92 
+93         int rowsAffected = dbHelper.updateNote(noteId, title, description, importance, dateTime, imageUriString);
+94 
+95         if (rowsAffected > 0) {
+96             Toast.makeText(this, "Note updated successfully", Toast.LENGTH_SHORT).show();
+97             Intent resultIntent = new Intent();
+98             setResult(RESULT_OK, resultIntent);
+99             finish();
+100        } else {
+101            Toast.makeText(this, "Error updating note", Toast.LENGTH_SHORT).show();
+102        }
+103    }
+104 
+105    private void deleteNote() {
+106        dbHelper.deleteNote(noteId);
+107        Toast.makeText(this, "Note deleted", Toast.LENGTH_SHORT).show();
+108        Intent resultIntent = new Intent();
+109        setResult(RESULT_OK, resultIntent);
+110        finish();
+111    }
+112 
+113    private String getCurrentDateTime() {
+114        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+115        return sdf.format(new java.util.Date());
+116    }
+117 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Д
+Файл DatabaseHelper.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.content.ContentValues;
+4  import android.content.Context;
+5  import android.database.Cursor;
+6  import android.database.sqlite.SQLiteDatabase;
+7  import android.database.sqlite.SQLiteOpenHelper;
+8  import android.net.Uri;
+9  
+10 import java.util.ArrayList;
+11 import java.util.List;
+12  
+13 public class DatabaseHelper extends SQLiteOpenHelper {
+14  
+15     private static final String DATABASE_NAME = "notes.db";
+16     private static final int DATABASE_VERSION = 1;
+17     public static final String TABLE_NOTES = "notes";
+18     public static final String COLUMN_ID = "id";
+19     public static final String COLUMN_TITLE = "title";
+20     public static final String COLUMN_DESCRIPTION = "description";
+21     public static final String COLUMN_IMPORTANCE = "importance";
+22     public static final String COLUMN_DATE_TIME = "dateTime";
+23     public static final String COLUMN_IMAGE_URI = "imageUri";
+24  
+25     public DatabaseHelper(Context context) {
+26         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+27     }
+28  
+29     @Override
+30     public void onCreate(SQLiteDatabase db) {
+31         String createTableQuery = "CREATE TABLE " + TABLE_NOTES + " ("
+32                 + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+33                 + COLUMN_TITLE + " TEXT, "
+34                 + COLUMN_DESCRIPTION + " TEXT, "
+35                 + COLUMN_IMPORTANCE + " INTEGER, "
+36                 + COLUMN_DATE_TIME + " TEXT, "
+37                 + COLUMN_IMAGE_URI + " TEXT)";
+38         db.execSQL(createTableQuery);
+39     }
+40  
+41     @Override
+42     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+43         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NOTES);
+44         onCreate(db);
+45     }
+46  
+47     public long addNote(String title, String description, int importance, String dateTime, String imageUri) {
+48         SQLiteDatabase db = this.getWritableDatabase();
+49         ContentValues values = new ContentValues();
+50         values.put(COLUMN_TITLE, title);
+51         values.put(COLUMN_DESCRIPTION, description);
+52         values.put(COLUMN_IMPORTANCE, importance);
+53         values.put(COLUMN_DATE_TIME, dateTime);
+54         values.put(COLUMN_IMAGE_URI, imageUri);
+55  
+56         long id = db.insert(TABLE_NOTES, null, values);
+57         db.close();
+58         return id;
+59     }
+60  
+61     public List<Note> getAllNotes() {
+62         List<Note> notesList = new ArrayList<>();
+63         SQLiteDatabase db = this.getReadableDatabase();
+64         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NOTES, null);
+65  
+66         if (cursor != null && cursor.moveToFirst()) {
+67             do {
+68                 int idIndex = cursor.getColumnIndex(COLUMN_ID);
+69                 int titleIndex = cursor.getColumnIndex(COLUMN_TITLE);
+70                 int descriptionIndex = cursor.getColumnIndex(COLUMN_DESCRIPTION);
+71                 int importanceIndex = cursor.getColumnIndex(COLUMN_IMPORTANCE);
+72                 int dateTimeIndex = cursor.getColumnIndex(COLUMN_DATE_TIME);
+73                 int imageUriIndex = cursor.getColumnIndex(COLUMN_IMAGE_URI);
+74  
+75                 if (idIndex != -1 && titleIndex != -1 && descriptionIndex != -1 &&
+76                         importanceIndex != -1 && dateTimeIndex != -1 && imageUriIndex != -1) {
+77  
+78                     long id = cursor.getLong(idIndex);
+79                     String title = cursor.getString(titleIndex);
+80                     String description = cursor.getString(descriptionIndex);
+81                     int importance = cursor.getInt(importanceIndex);
+82                     String dateTime = cursor.getString(dateTimeIndex);
+83                     String imageUriString = cursor.getString(imageUriIndex);
+84  
+85                     Uri imageUri = null;
+86                     if (imageUriString != null && !imageUriString.isEmpty()) {
+87                         try {
+88                             imageUri = Uri.parse(imageUriString);
+89                         } catch (Exception e) {
+90                             e.printStackTrace();
+91                         }
+92                     }
+93  
+94                     Note note = new Note(id, title, description, importance, dateTime, imageUri);
+95                     notesList.add(note);
+96                 }
+97  
+98             } while (cursor.moveToNext());
+99  
+100            cursor.close();
+101        }
+102        db.close();
+103        return notesList;
+104    }
+105  
+106    public int updateNote(long id, String title, String description, int importance, String dateTime, String imageUri) {
+107        SQLiteDatabase db = this.getWritableDatabase();
+108        ContentValues values = new ContentValues();
+109        values.put(COLUMN_TITLE, title);
+110        values.put(COLUMN_DESCRIPTION, description);
+111        values.put(COLUMN_IMPORTANCE, importance);
+112        values.put(COLUMN_DATE_TIME, dateTime);
+113        values.put(COLUMN_IMAGE_URI, imageUri);
+114  
+115        int rowsAffected = db.update(TABLE_NOTES, values, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+116        db.close();
+117        return rowsAffected;
+118    }
+119  
+120    public void deleteNote(long id) {
+121        SQLiteDatabase db = this.getWritableDatabase();
+122        db.delete(TABLE_NOTES, COLUMN_ID + " = ?", new String[]{String.valueOf(id)});
+123        db.close();
+124    }
+125  
+126    public void deleteAllNotes() {
+127        SQLiteDatabase db = this.getWritableDatabase();
+128        db.delete(TABLE_NOTES, null, null);
+129        db.close();
+130    }
+131 }
+
+
+
+
+
+
+
+
+
+
+ДОДАТОК Е
+Файл NotesAdapter.java
+1  package com.example.zakhar_koryakin_pzpi_23_8;
+2  
+3  import android.content.Context;
+4  import android.graphics.Bitmap;
+5  import android.provider.MediaStore;
+6  import android.view.LayoutInflater;
+7  import android.view.View;
+8  import android.view.ViewGroup;
+9  import android.widget.ImageView;
+10 import android.widget.TextView;
+11 
+12 import androidx.annotation.NonNull;
+13 import androidx.recyclerview.widget.RecyclerView;
+14 
+15 import java.io.IOException;
+16 import java.util.ArrayList;
+17 
+18 public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHolder> {
+19 
+20     private Context context;
+21     private ArrayList<Note> notesList;
+22     private OnNoteClickListener onNoteClickListener;
+23 
+24     public NotesAdapter(Context context, ArrayList<Note> notesList, OnNoteClickListener onNoteClickListener) {
+25         this.context = context;
+26         this.notesList = notesList;
+27         this.onNoteClickListener = onNoteClickListener;
+28     }
+29 
+30     @NonNull
+31     @Override
+32     public NoteViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+33         View view = LayoutInflater.from(context).inflate(R.layout.note_item, parent, false);
+34         return new NoteViewHolder(view);
+35     }
+36 
+37     @Override
+38     public void onBindViewHolder(@NonNull NoteViewHolder holder, int position) {
+39         Note note = notesList.get(position);
+40         holder.title.setText(note.getTitle());
+41         holder.description.setText(note.getDescription());
+42         holder.dateTime.setText(note.getDateTime());
+43 
+44         if (note.getImageUri() != null) {
+45             try {
+46                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), note.getImageUri());
+47                 holder.image.setImageBitmap(bitmap);
+48             } catch (IOException e) {
+49                 holder.image.setImageResource(R.drawable.ic_launcher_background);
+50                 e.printStackTrace();
+51             }
+52         } else {
+53             holder.image.setImageResource(R.drawable.ic_launcher_background);
+54         }
+55 
+56         holder.importance.setImageResource(getImportanceIcon(note.getImportance()));
+57 
+58         holder.itemView.setOnClickListener(v -> onNoteClickListener.onNoteClick(note));
+59     }
+60 
+61     @Override
+62     public int getItemCount() {
+63         return notesList.size();
+64     }
+65 
+66     private int getImportanceIcon(int importance) {
+67         switch (importance) {
+68             case 1:
+69                 return R.drawable.low_importance;
+70             case 2:
+71                 return R.drawable.medium_importance;
+72             case 3:
+73                 return R.drawable.high_importance;
+74             default:
+75                 return R.drawable.low_importance;
+76         }
+77     }
+78 
+79     public interface OnNoteClickListener {
+80         void onNoteClick(Note note);
+81     }
+82 
+83     public static class NoteViewHolder extends RecyclerView.ViewHolder {
+84 
+85         TextView title, description, dateTime;
+86         ImageView image, importance;
+87 
+88         public NoteViewHolder(View itemView) {
+89             super(itemView);
+90             title = itemView.findViewById(R.id.title);
+91             description = itemView.findViewById(R.id.description);
+92             dateTime = itemView.findViewById(R.id.dateTime);
+93             image = itemView.findViewById(R.id.image);
+94             importance = itemView.findViewById(R.id.importance);
+95         }
+96     }
+97 }
+2
+
+
