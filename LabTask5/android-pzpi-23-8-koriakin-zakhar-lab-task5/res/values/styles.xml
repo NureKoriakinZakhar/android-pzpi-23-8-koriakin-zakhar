@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Light" parent="Theme.AppCompat.Light">
+        <item name="android:windowBackground">@color/lightBackground</item>
+        <item name="android:textColor">@color/darkText</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Theme.Dark" parent="Theme.AppCompat">
+        <item name="android:windowBackground">@color/darkBackground</item>
+        <item name="android:textColor">@color/lightText</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+</resources>
